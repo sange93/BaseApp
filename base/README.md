@@ -1,22 +1,21 @@
 # base库
-基础库，所有APP通用。
+基础库，所有APP通用。  
 架构：Jetpack MVVM
 ## 使用规范
-Application --必须继承--> BaseApplication
-Activity --必须继承--> BaseViewModelActivity；
-Dialog --必须继承--> BaseDialogFragment
+Application --必须继承--> BaseApplication  
+Activity --必须继承--> BaseViewModelActivity  
+Dialog --必须继承--> BaseDialogFragment  
 LoadState：页面加载状态，用于监听耗时操作的状态，动态改变页面UI；
 ## 常用工具类（util包）：
-exception包：异常处理工具类，使用说明详见包内README.md;
-AesUtils：AES加解密工具类；使用前请调用AesUtils.init()初始化，建议在Application中调用；
-EncodeUtils：编解码工具类；
-LogUtils：日志工具类；
-ProcessUtils：进程工具类；
-ToastUtils：Toast提示工具类
-IntExt：Int整型扩展类；
-ViewModelExt：ViewModel扩展类
+exception包：异常处理工具类，使用说明详见包内README.md;  
+AesUtils：AES加解密工具类；使用前请调用AesUtils.init()初始化，建议在Application中调用；  
+EncodeUtils：编解码工具类；  
+LogUtils：日志工具类；  
+ProcessUtils：进程工具类；  
+ToastUtils：Toast提示工具类  
+IntExt：Int整型扩展类；  
+ViewModelExt：ViewModel扩展类  
 TopLevelUtils：顶级方法工具类；
-
 ## 注意
 1、gradle sync 报错:
 ```
