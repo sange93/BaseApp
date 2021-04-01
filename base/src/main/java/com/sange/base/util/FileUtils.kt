@@ -164,7 +164,7 @@ object FileUtils {
         dir: String,
         files: Array<String>,
         loadSuccess: () -> Unit
-    ) = withContext(Dispatchers.IO){
+    ) = withContext(Dispatchers.IO) {
         var outputStream: OutputStream
         var inputStream: InputStream
         val buf = ByteArray(4096)
@@ -191,42 +191,6 @@ object FileUtils {
         }
         loadSuccess.invoke()
     }
-
-    /**
-     * 拷贝Assets资源到磁盘
-     */
-    /*fun copyAssetsToStorage(
-        context: Context,
-        dir: String,
-        files: Array<String>,
-        loadSuccess: () -> Unit
-    ) {
-        Thread {
-            var outputStream: OutputStream
-            var inputStream: InputStream
-            val buf = ByteArray(4096)
-            files.forEach {
-                try {
-                    if (File("$dir/$it").exists()) {
-                        return@forEach
-                    }
-                    inputStream = context.assets.open(it)
-                    outputStream = FileOutputStream("$dir/$it")
-                    var length = inputStream.read(buf)
-                    while (length > 0) {
-                        outputStream.write(buf, 0, length)
-                        length = inputStream.read(buf)
-                    }
-                    outputStream.close()
-                    inputStream.close()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                    return@Thread
-                }
-            }
-            loadSuccess.invoke()
-        }.start()
-    }*/
 
     /**
      * 读取文件数据
