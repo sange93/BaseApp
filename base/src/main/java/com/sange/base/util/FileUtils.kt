@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Environment
 import androidx.fragment.app.FragmentActivity
 import com.sange.base.BaseApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.*
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
@@ -157,7 +159,43 @@ object FileUtils {
     /**
      * 拷贝Assets资源到磁盘
      */
-    fun copyAssetsToStorage(
+    suspend fun copyAssetsToStorage(
+        context: Context,
+        dir: String,
+        files: Array<String>,
+        loadSuccess: () -> Unit
+    ) = withContext(Dispatchers.IO){
+        var outputStream: OutputStream
+        var inputStream: InputStream
+        val buf = ByteArray(4096)
+        files.forEach {
+            try {
+                // 已存在，则删除重新拷贝
+                val file = File("$dir/$it")
+                if (file.exists()) {
+                    file.delete()
+                }
+                inputStream = context.assets.open(it)
+                outputStream = FileOutputStream("$dir/$it")
+                var length = inputStream.read(buf)
+                while (length > 0) {
+                    outputStream.write(buf, 0, length)
+                    length = inputStream.read(buf)
+                }
+                outputStream.close()
+                inputStream.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+                return@withContext
+            }
+        }
+        loadSuccess.invoke()
+    }
+
+    /**
+     * 拷贝Assets资源到磁盘
+     */
+    /*fun copyAssetsToStorage(
         context: Context,
         dir: String,
         files: Array<String>,
@@ -188,7 +226,7 @@ object FileUtils {
             }
             loadSuccess.invoke()
         }.start()
-    }
+    }*/
 
     /**
      * 读取文件数据

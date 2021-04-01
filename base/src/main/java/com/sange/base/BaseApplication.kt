@@ -1,8 +1,6 @@
 package com.sange.base
 
-import android.content.Context
 import android.content.pm.ApplicationInfo
-import androidx.multidex.MultiDex
 import androidx.multidex.MultiDexApplication
 import com.sange.base.util.ProcessUtils
 
@@ -55,7 +53,7 @@ abstract class BaseApplication : MultiDexApplication() {
     /**
      * 获取是否debug版本
      */
-    private fun initDebug(){
+    private fun initDebug() {
         isDebugMode = instance.applicationInfo != null && instance.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
     }
 }
