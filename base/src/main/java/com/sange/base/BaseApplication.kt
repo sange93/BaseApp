@@ -1,7 +1,8 @@
 package com.sange.base
 
+import android.app.Application
 import android.content.pm.ApplicationInfo
-import androidx.multidex.MultiDexApplication
+//import androidx.multidex.MultiDexApplication
 import com.sange.base.util.ProcessUtils
 
 
@@ -10,7 +11,7 @@ import com.sange.base.util.ProcessUtils
  *
  * @author ssq
  */
-abstract class BaseApplication : MultiDexApplication() {
+abstract class BaseApplication : Application() {
     companion object {
         // app实例
         lateinit var instance: BaseApplication
