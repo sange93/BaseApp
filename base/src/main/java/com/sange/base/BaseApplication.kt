@@ -2,7 +2,6 @@ package com.sange.base
 
 import android.app.Application
 import android.content.pm.ApplicationInfo
-//import androidx.multidex.MultiDexApplication
 import com.sange.base.util.ProcessUtils
 
 

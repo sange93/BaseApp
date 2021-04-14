@@ -47,14 +47,12 @@ dependencies {
 
     //-----------以下为定制内容------------
     ext{
-//        multidex = '2.0.1'
         lifecycle = '2.3.0'
         kotlinxCoroutines = '1.4.3'
         adapterHelper = '3.0.6'
         permissionx = '1.4.0'
     }
     implementation files('libs/sun.misc.BASE64Decoder.jar')
-//    api "androidx.multidex:multidex:$multidex"
     // 约束布局
     api 'androidx.constraintlayout:constraintlayout:2.0.4'
     // 添加Jetpack中架构组件的依赖，注意viewmodel要添加viewmodel-ktx的依赖
