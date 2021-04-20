@@ -4,14 +4,11 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.sange.base.BaseApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-
 
 /**
  * Activity 基类（公共通用型）
@@ -19,7 +16,7 @@ import kotlinx.coroutines.cancel
  *
  * @author ssq
  */
-abstract class BaseActivity<VM : ViewModel, VB : ViewBinding> : AppCompatActivity(),
+abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(),
     CoroutineScope by MainScope() {
 
     /** 是否分发触摸事件。true 屏幕可点击；false 屏幕不可点击*/
@@ -29,20 +26,9 @@ abstract class BaseActivity<VM : ViewModel, VB : ViewBinding> : AppCompatActivit
     protected var mStrictModeEnable = false
 
     /**
-     * ViewModel 实例
-     * 如果方法 providerVMClass()没有提供ViewModel类 请不要使用此对象
-     */
-    protected lateinit var mViewModel: VM
-
-    /**
      * ViewBinding 实例
      */
     protected lateinit var mBinding: VB
-
-    /**
-     * 提供ViewModel类
-     */
-    protected abstract fun providerVMClass(): Class<VM>?
 
     /**
      * 提供ViewBinding对象
@@ -58,28 +44,34 @@ abstract class BaseActivity<VM : ViewModel, VB : ViewBinding> : AppCompatActivit
         super.onCreate(savedInstanceState)
         mBinding = providerVB()
         setContentView(mBinding.root)
-        providerVMClass()?.let { mViewModel = ViewModelProvider(this).get(it) }
         initView()
+        // 严格模式测试（生产环境不要开启）
+        enableStrictMode(mStrictModeEnable && BaseApplication.isDebugMode)
+    }
 
-        // 严格模式测试
-        if (mStrictModeEnable && BaseApplication.isDebugMode) {
-            StrictMode.setThreadPolicy(
-                StrictMode.ThreadPolicy.Builder()
-                    .detectDiskReads()
-                    .detectDiskWrites()
-                    .detectNetwork() // or .detectAll() for all detectable problems
-                    .penaltyLog()
-                    .build()
-            )
-            StrictMode.setVmPolicy(
-                StrictMode.VmPolicy.Builder()
-                    .detectLeakedSqlLiteObjects()
-                    .detectLeakedClosableObjects()
-                    .penaltyLog()
-                    .penaltyDeath()
-                    .build()
-            )
-        }
+    /**
+     * 开启严格模式调试
+     *
+     * @param isEnable 是否开启
+     */
+    private fun enableStrictMode(isEnable: Boolean) {
+        if (!isEnable) return
+        StrictMode.setThreadPolicy(
+            StrictMode.ThreadPolicy.Builder()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectNetwork() // or .detectAll() for all detectable problems
+                .penaltyLog()
+                .build()
+        )
+        StrictMode.setVmPolicy(
+            StrictMode.VmPolicy.Builder()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
+                .penaltyLog()
+                .penaltyDeath()
+                .build()
+        )
     }
 
     /**
@@ -103,4 +95,3 @@ abstract class BaseActivity<VM : ViewModel, VB : ViewBinding> : AppCompatActivit
         super.onDestroy()
     }
 }
-
