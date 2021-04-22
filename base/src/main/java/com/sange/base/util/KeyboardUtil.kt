@@ -81,8 +81,19 @@ object KeyboardUtil {
      */
     private fun toggleSoftInput() {
         val imm = BaseApplication.instance.getSystemService(Context.INPUT_METHOD_SERVICE)
-        if(imm is InputMethodManager) {
+        if (imm is InputMethodManager) {
             imm.toggleSoftInput(0, 0)
+        }
+    }
+
+    /**
+     * 隐藏软键盘
+     */
+    fun hideSoftInput(activity: FragmentActivity) {
+        activity.currentFocus?.let {
+            val imm: InputMethodManager =
+                activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
         }
     }
 }
