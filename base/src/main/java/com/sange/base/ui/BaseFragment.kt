@@ -19,8 +19,13 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), CoroutineScope by Ma
 
     /**
      * ViewBinding 实例
+     * This property is only valid between onCreateView and onDestroyView.
      */
-    protected lateinit var mBinding: VB
+    private var _binding: VB? = null
+    /**
+     * ViewBinding 实例
+     */
+    protected val mBinding get() = _binding!!
 
     /**
      * 提供ViewBinding对象
@@ -41,7 +46,7 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), CoroutineScope by Ma
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mBinding = providerVB(inflater, container)
+        _binding = providerVB(inflater, container)
         return mBinding.root
     }
 
@@ -53,5 +58,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment(), CoroutineScope by Ma
     override fun onDestroyView() {
         cancel()// 取消协程
         super.onDestroyView()
+        _binding = null
     }
 }
