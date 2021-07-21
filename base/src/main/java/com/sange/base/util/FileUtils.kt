@@ -258,6 +258,7 @@ object FileUtils {
     /**
      * 跳至选择系统管理器选择文件
      */
+    @Deprecated("请使用registerForActivityResult()替代")
     fun chooseFile(activity: FragmentActivity, requestCode: Int) {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             type = "*/*"
