@@ -9,7 +9,7 @@ import java.util.regex.Pattern
  */
 fun String.crc(): String {
     // 去除空格 并 转为小写
-    val dataTmp = this.replace(" ", "").toLowerCase(Locale.ENGLISH)
+    val dataTmp = this.replace(" ", "").lowercase(Locale.ENGLISH)
     // 计算并拼接CRC
     return "$dataTmp${CRCUtils.getReverseCRC(ByteUtils.hex2byte(dataTmp))}"
 }
