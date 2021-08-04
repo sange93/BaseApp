@@ -4,17 +4,15 @@ plugins {
 //    id 'com.github.dcendents.android-maven'
     id 'maven-publish'
 }
-//apply plugin: 'com.github.dcendents.android-maven'
 
 repositories {
     mavenCentral()
     google()
-//    jcenter()
     maven { url "https://jitpack.io" }
 }
 
 group='com.github.sange93'
-version='1.0'
+version='1.0.11'
 
 android {
     compileSdkVersion 30
@@ -89,7 +87,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.sange93'
                 artifactId = 'BaseApp'
-                version = '1.0'
+                version = '1.0.11'
             }
         }
     }
