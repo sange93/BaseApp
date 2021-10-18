@@ -21,4 +21,12 @@ ROUND_HALF_EVEN  均匀舍入法(奇入偶舍)
 以下例子为保留小数点1位，那么这种舍入方式下的结果。
 1.15>1.2 1.25>1.2
  */
-fun Double.toHalfInt(): Int = BigDecimal(this).setScale(0, BigDecimal.ROUND_HALF_EVEN).toInt()
+fun Double.toHalfInt(): Int = toHalf(0).toInt()
+
+fun Double.toHalfDouble(): Double = toHalf(2).toDouble()
+
+/**
+ * 四舍五入
+ * @param newScale 要保留的小数点后位数
+ */
+fun Double.toHalf(newScale: Int): BigDecimal = BigDecimal(this).setScale(newScale, BigDecimal.ROUND_HALF_EVEN)
