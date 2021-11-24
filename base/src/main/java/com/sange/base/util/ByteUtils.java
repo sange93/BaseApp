@@ -57,7 +57,6 @@ public class ByteUtils {
      * 向串口发送数据转为字节数组
      */
     public static byte[] hex2byte(String hex) {
-//        String digital = "0123456789ABCDEF";
         String digital = "0123456789abcdef";
         String hex1 = hex.replace(" ", "");
         char[] hex2char = hex1.toCharArray();
@@ -72,7 +71,9 @@ public class ByteUtils {
     }
     /**
      * 接收到的字节数组转换16进制字符串
+     * 已过时：请使用ByteArrayExt.kt——>ByteArray.toHexString()
      */
+    @Deprecated
     public static String bytes2HexString(byte[] b, int size) {
         StringBuilder ret = new StringBuilder();
         for (int i = 0; i < size; i++) {
