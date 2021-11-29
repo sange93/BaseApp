@@ -15,10 +15,7 @@ open class BaseDialogFragment : DialogFragment() {
         // 如果已有此弹窗 就移除
         if (isAdded || manager.findFragmentByTag(tag) != null) {
             manager.beginTransaction().remove(this).commit()
-//            return
         }
-        this.mDismissed = false
-        this.mShownByMe = true
         val ft = manager.beginTransaction()
         ft.add(this, tag)
         manager.executePendingTransactions()

@@ -17,6 +17,11 @@ fun Int.toFullHex(): String {
 }
 
 /**
+ * 将 int 类型数据转成十六进制的字符串(保留后四位)
+ */
+fun Int.toHex(): String = this.toFullHex().substring(4, 8)
+
+/**
  * 如果int是string资源ID，可以使用此函数获取文字String
  */
 fun Int.getStringRes(): String = BaseApplication.instance.getString(this)
