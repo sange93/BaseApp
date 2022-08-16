@@ -25,3 +25,9 @@ fun Int.toHex(): String = this.toFullHex().substring(4, 8)
  * 如果int是string资源ID，可以使用此函数获取文字String
  */
 fun Int.getStringRes(): String = BaseApplication.instance.getString(this)
+
+/**
+ * 如果int是string资源ID，可以使用此函数获取文字String
+ * @param formatArgs 格式化参数
+ */
+fun Int.getStringRes(vararg formatArgs: Any): String = BaseApplication.instance.getString(this, *formatArgs)
