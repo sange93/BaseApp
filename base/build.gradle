@@ -11,7 +11,7 @@ repositories {
 }
 
 group='com.github.sange93'
-version='1.0.18'
+version='1.0.19'
 
 android {
     compileSdkVersion 33
@@ -85,7 +85,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.sange93'
                 artifactId = 'BaseApp'
-                version = '1.0.18'
+                version = '1.0.19'
             }
         }
     }
