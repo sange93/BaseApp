@@ -67,7 +67,7 @@ class RoundAngleImageView : AppCompatImageView {
         heightF = height.toFloat()
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         //这里做下判断，只有图片的宽高大于设置的圆角距离的时候才进行裁剪
         val maxLeft = max(leftTopRadius, leftBottomRadius)
         val maxRight = max(rightTopRadius, rightBottomRadius)
@@ -91,7 +91,7 @@ class RoundAngleImageView : AppCompatImageView {
             path.lineTo(0f, leftTopRadius)
             path.quadTo(0f, 0f, leftTopRadius, 0f)
 
-            canvas?.clipPath(path)
+            canvas.clipPath(path)
         }
         super.onDraw(canvas)
     }
