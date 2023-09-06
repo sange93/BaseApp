@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.sange93"
-version = "1.0.20"
+version = "1.1.0"
 
 android {
     namespace = "com.sange.base"
@@ -17,6 +17,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 //        consumerProguardFiles "consumer-rules.pro"
+        // 开启矢量图
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
@@ -35,6 +39,17 @@ android {
     buildFeatures{
         // 启用ViewBinding
         viewBinding = true
+        // 启用compose
+        compose = true
+    }
+    composeOptions {
+        // kotlin编译器与kotlin版本对应关系：https://developer.android.google.cn/jetpack/androidx/releases/compose-kotlin#kts
+        kotlinCompilerExtensionVersion = "1.5.2"// 1.5.2对应kotlin v1.9.0
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
@@ -50,6 +65,20 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     //-----------以下为定制内容------------
+    // compose最新Bom版本：https://developer.android.google.cn/jetpack/compose/bom?hl=en
+    // Bom内Lib详细版本：https://developer.android.google.cn/jetpack/compose/bom/bom-mapping?hl=en
+    val composeBom = platform("androidx.compose:compose-bom:2023.08.00")
+    implementation(composeBom)
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.material3:material3")
+    androidTestImplementation(composeBom)
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+
     implementation(files("libs/sun.misc.BASE64Decoder.jar"))
     // 约束布局
     api("androidx.constraintlayout:constraintlayout:2.1.4")
@@ -77,50 +106,9 @@ afterEvaluate {
             create<MavenPublication>("release"){
                 groupId = "com.github.sange93"
                 artifactId = "BaseApp"
-                version = "1.0.20"
+                version = "1.1.0"
                 from(components["release"])
             }
         }
     }
 }
-
-/*afterEvaluate {
-    publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            release(MavenPublication) {
-                from components.release
-                groupId = "com.github.sange93"
-                artifactId = "BaseApp"
-                version = "1.0.20"
-            }
-        }
-    }
-}*/
-// Because the components are created only during the afterEvaluate phase, you must
-// configure your publications using the afterEvaluate() lifecycle method.
-/*
-afterEvaluate {
-    publishing {
-        publications {
-            // Creates a Maven publication called "release".
-            release(MavenPublication) {
-                // Applies the component for the release build variant.
-                from components.release
-
-                        // You can then customize attributes of the publication as shown below.
-                        groupId = 'com.example.MyLibrary'
-                artifactId = 'final'
-                version = '1.0'
-            }
-            // Creates a Maven publication called “debug”.
-            debug(MavenPublication) {
-                // Applies the component for the debug build variant.
-                from components.debug
-
-                        groupId = 'com.example.MyLibrary'
-                artifactId = 'final-debug'
-                version = '1.0'
-            }
-        }
-    }*/
