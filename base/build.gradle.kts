@@ -44,7 +44,9 @@ android {
     }
     composeOptions {
         // kotlin编译器与kotlin版本对应关系：https://developer.android.google.cn/jetpack/androidx/releases/compose-kotlin#kts
-        kotlinCompilerExtensionVersion = "1.5.2"// 1.5.2对应kotlin v1.9.0
+        // 1.5.2对应kotlin v1.9.0
+        // 1.5.3	1.9.10
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -67,7 +69,7 @@ dependencies {
     //-----------以下为定制内容------------
     // compose最新Bom版本：https://developer.android.google.cn/jetpack/compose/bom?hl=en
     // Bom内Lib详细版本：https://developer.android.google.cn/jetpack/compose/bom/bom-mapping?hl=en
-    val composeBom = platform("androidx.compose:compose-bom:2023.08.00")
+    val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
     implementation(composeBom)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
