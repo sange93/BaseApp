@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.sange93"
-version = "1.1.1"
+version = "1.1.2"
 
 android {
     namespace = "com.sange.base"
@@ -56,9 +56,8 @@ android {
 }
 
 dependencies {
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    val lifecycleVersion = "2.6.2"
+
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
@@ -67,18 +66,40 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     //-----------以下为定制内容------------
+    api("androidx.activity:activity-compose:1.8.2")
     // compose最新Bom版本：https://developer.android.google.cn/jetpack/compose/bom?hl=en
     // Bom内Lib详细版本：https://developer.android.google.cn/jetpack/compose/bom/bom-mapping?hl=en
     val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
-    implementation(composeBom)
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    androidTestImplementation(composeBom)
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    api(composeBom)
+    api("androidx.compose.ui:ui")
+    api("androidx.compose.ui:ui-graphics")
+    api("androidx.compose.ui:ui-tooling-preview")
+    api("androidx.compose.material3:material3")
+    androidTestApi(composeBom)
+    androidTestApi("androidx.compose.ui:ui-test-junit4")
+    debugApi("androidx.compose.ui:ui-tooling")
+    debugApi("androidx.compose.ui:ui-test-manifest")
+
+    api("androidx.compose.material3:material3-window-size-class")
+    // Integration with observables
+    api("androidx.compose.runtime:runtime-livedata")
+    // Compose Material 图标
+    api("androidx.compose.material:material-icons-core")
+    api("androidx.compose.material:material-icons-extended")
+    // Integration with ViewModels
+    api("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
+    // 用于Compose的生命周期运行时
+    api("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
+    // navigation
+    api("androidx.navigation:navigation-compose:2.7.5")
+
+    // Accompanist: https://google.github.io/accompanist/
+    val accompanistVersion = "0.33.2-alpha"
+    // 动态权限申请
+    api("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+
+    // 启动画面
+    api("androidx.core:core-splashscreen:1.0.0")
 
 
     implementation(files("libs/sun.misc.BASE64Decoder.jar"))
@@ -108,7 +129,7 @@ afterEvaluate {
             create<MavenPublication>("release"){
                 groupId = "com.github.sange93"
                 artifactId = "BaseApp"
-                version = "1.1.1"
+                version = "1.1.2"
                 from(components["release"])
             }
         }
