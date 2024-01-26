@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.sange93"
-version = "1.1.2"
+version = "1.1.3"
 
 android {
     namespace = "com.sange.base"
@@ -13,10 +13,8 @@ android {
 
     defaultConfig {
         minSdk = 21
-//        targetSdk = 34
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-//        consumerProguardFiles "consumer-rules.pro"
         // 开启矢量图
         vectorDrawables {
             useSupportLibrary = true
@@ -44,9 +42,7 @@ android {
     }
     composeOptions {
         // kotlin编译器与kotlin版本对应关系：https://developer.android.google.cn/jetpack/androidx/releases/compose-kotlin#kts
-        // 1.5.2对应kotlin v1.9.0
-        // 1.5.3	1.9.10
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = "1.5.8"
     }
     packaging {
         resources {
@@ -69,12 +65,13 @@ dependencies {
     api("androidx.activity:activity-compose:1.8.2")
     // compose最新Bom版本：https://developer.android.google.cn/jetpack/compose/bom?hl=en
     // Bom内Lib详细版本：https://developer.android.google.cn/jetpack/compose/bom/bom-mapping?hl=en
-    val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
+    val composeBom = platform("androidx.compose:compose-bom:2024.01.00")
     api(composeBom)
     api("androidx.compose.ui:ui")
     api("androidx.compose.ui:ui-graphics")
     api("androidx.compose.ui:ui-tooling-preview")
     api("androidx.compose.material3:material3")
+    api("androidx.compose.material:material")
     androidTestApi(composeBom)
     androidTestApi("androidx.compose.ui:ui-test-junit4")
     debugApi("androidx.compose.ui:ui-tooling")
@@ -94,9 +91,13 @@ dependencies {
     api("androidx.navigation:navigation-compose:2.7.5")
 
     // Accompanist: https://google.github.io/accompanist/
-    val accompanistVersion = "0.33.2-alpha"
+    val accompanistVersion = "0.34.0"
     // 动态权限申请
     api("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+//    // 权限请求框架 适配Android 14 https://github.com/getActivity/XXPermissions
+//    api 'com.github.getActivity:XXPermissions:18.5'
+    // PermissionX 权限请求库
+//    api("com.guolindev.permissionx:permissionx:1.7.1")
 
     // 启动画面
     api("androidx.core:core-splashscreen:1.0.0")
@@ -109,13 +110,11 @@ dependencies {
     api("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     // Kotlin Coroutines 协程
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     // ViewPager2
     api("androidx.viewpager2:viewpager2:1.0.0")
     // 强大而灵活的RecyclerView Adapter
     api("com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6")
-    // PermissionX 权限请求库
-    api("com.guolindev.permissionx:permissionx:1.7.1")
     // Android 版本更新 https://github.com/AlexLiuSheng/CheckVersionLib
     // 原版已不再维护，未适配Android 12 会报java.lang.IllegalArgumentException错误
 //    api("com.github.AlexLiuSheng:CheckVersionLib:2.4.1_androidx")
@@ -129,7 +128,7 @@ afterEvaluate {
             create<MavenPublication>("release"){
                 groupId = "com.github.sange93"
                 artifactId = "BaseApp"
-                version = "1.1.2"
+                version = "1.1.3"
                 from(components["release"])
             }
         }
