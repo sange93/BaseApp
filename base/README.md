@@ -16,6 +16,10 @@ ToastUtils：Toast提示工具类
 IntExt：Int整型扩展类；  
 ViewModelExt：ViewModel扩展类  
 TopLevelUtils：顶级方法工具类；
+## 常用 Compose 控件（ui包）
+StatusBar：状态栏
+NavigationBar：底部导航栏
+PagerIndicator：Pager指示器
 ## 注意
 1、gradle sync 报错:
 ```
