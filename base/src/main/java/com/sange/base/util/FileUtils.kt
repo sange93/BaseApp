@@ -1,17 +1,27 @@
 package com.sange.base.util
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import androidx.fragment.app.FragmentActivity
 import com.sange.base.BaseApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 /**
  * 文件工具类
@@ -288,6 +298,46 @@ object FileUtils {
         } catch (e: Exception) {
             e.printStackTrace()
             ""
+        }
+    }
+
+    /**
+     * 保存Bitmap图像 至 相册(公共文件夹 Pictures)
+     * @param bitmap 图像
+     * @param fileName 文件名称
+     * @param appDir APP文件夹名称
+     */
+    fun saveBitmapToAlbum(bitmap: Bitmap, fileName: String, appDir: String) {
+        val time = System.currentTimeMillis() / 1000
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, fileName)// 文件名
+            put(MediaStore.Images.Media.DATE_ADDED, time)// 添加时间
+            put(MediaStore.Images.Media.DATE_MODIFIED, time)// 修改时间
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")// 文件类型
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                //android Q中不再使用DATA字段，而用RELATIVE_PATH代替
+                //RELATIVE_PATH是相对路径不是绝对路径
+                //DCIM是系统文件夹，关于系统文件夹可以到系统自带的文件管理器中查看，不可以写没存在的名字
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/$appDir")// 保存位置
+            } else {
+                put(
+                    MediaStore.Images.Media.DATA,
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path + "/$appDir"
+                )// 保存位置
+            }
+        }
+        //执行insert操作，向系统文件夹中添加文件
+        //EXTERNAL_CONTENT_URI代表外部存储器，该值不变
+        val contentResolver = BaseApplication.instance.contentResolver
+        contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)?.let {
+            //若生成了uri，则表示该文件添加成功
+            //使用流将内容写入该uri中即可
+            val outputStream = contentResolver.openOutputStream(it)
+            if (outputStream != null) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+                outputStream.flush()
+                outputStream.close()
+            }
         }
     }
 }
