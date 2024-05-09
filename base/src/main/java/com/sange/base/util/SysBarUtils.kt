@@ -2,9 +2,10 @@ package com.sange.base.util
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
+import android.os.Build
 import android.view.View
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.annotation.RequiresApi
 import androidx.core.view.WindowCompat
 
 /**
@@ -29,12 +30,13 @@ object SysBarUtils {
     /**
      * 设置系统顶部底部栏 背景色--透明
      */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     fun setSysBarBackgroundTransparent(context: Context){
         (context as Activity).window.run {
             // 设置状态栏背景色
-            statusBarColor = Color.Transparent.toArgb()
+            statusBarColor = Color.TRANSPARENT
             // 设置底部导航栏颜色
-            navigationBarColor = Color.Transparent.toArgb()//Color.Black.toArgb()
+            navigationBarColor = Color.TRANSPARENT//Color.Black.toArgb()
         }
     }
 }

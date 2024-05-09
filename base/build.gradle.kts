@@ -12,7 +12,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 19
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // 开启矢量图
@@ -37,13 +37,13 @@ android {
     buildFeatures{
         // 启用ViewBinding
         viewBinding = true
-        // 启用compose
-        compose = true
+//        // 启用compose
+//        compose = true
     }
-    composeOptions {
+    /*composeOptions {
         // kotlin编译器与kotlin版本对应关系：https://developer.android.google.cn/jetpack/androidx/releases/compose-kotlin#kts
         kotlinCompilerExtensionVersion = "1.5.8"
-    }
+    }*/
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -62,7 +62,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     //-----------以下为定制内容------------
-    api("androidx.activity:activity-compose:1.8.2")
+    /*api("androidx.activity:activity-compose:1.8.2")
     // compose最新Bom版本：https://developer.android.google.cn/jetpack/compose/bom?hl=en
     // Bom内Lib详细版本：https://developer.android.google.cn/jetpack/compose/bom/bom-mapping?hl=en
     val composeBom = platform("androidx.compose:compose-bom:2024.01.00")
@@ -88,7 +88,7 @@ dependencies {
     // 用于Compose的生命周期运行时
     api("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
     // navigation
-    api("androidx.navigation:navigation-compose:2.7.5")
+    api("androidx.navigation:navigation-compose:2.7.5")*/
 
     // Accompanist: https://google.github.io/accompanist/
     val accompanistVersion = "0.34.0"
@@ -100,7 +100,7 @@ dependencies {
 //    api("com.guolindev.permissionx:permissionx:1.7.1")
 
     // 启动画面
-    api("androidx.core:core-splashscreen:1.0.0")
+//    api("androidx.core:core-splashscreen:1.0.0")
 
 
     implementation(files("libs/sun.misc.BASE64Decoder.jar"))
