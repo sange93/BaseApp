@@ -52,7 +52,7 @@ android {
 }
 
 dependencies {
-    val lifecycleVersion = "2.6.2"
+//    val lifecycleVersion = "2.6.2"
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -91,9 +91,9 @@ dependencies {
     api("androidx.navigation:navigation-compose:2.7.5")*/
 
     // Accompanist: https://google.github.io/accompanist/
-    val accompanistVersion = "0.34.0"
-    // 动态权限申请
-    api("com.google.accompanist:accompanist-permissions:$accompanistVersion")
+//    val accompanistVersion = "0.34.0"
+//    // 动态权限申请
+//    api("com.google.accompanist:accompanist-permissions:$accompanistVersion")
 //    // 权限请求框架 适配Android 14 https://github.com/getActivity/XXPermissions
 //    api 'com.github.getActivity:XXPermissions:18.5'
     // PermissionX 权限请求库
