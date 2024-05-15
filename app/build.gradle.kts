@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.sange.baseapp"
-        minSdk = 22
+        minSdk = 19
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

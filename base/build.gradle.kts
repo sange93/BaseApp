@@ -118,7 +118,8 @@ dependencies {
     // Android 版本更新 https://github.com/AlexLiuSheng/CheckVersionLib
     // 原版已不再维护，未适配Android 12 会报java.lang.IllegalArgumentException错误
 //    api("com.github.AlexLiuSheng:CheckVersionLib:2.4.1_androidx")
-    api("com.github.jikun2008:CheckVersionLib:2.4.5")
+    // Android 版本更新 https://github.com/jikun2008/CheckVersionLib/
+//    api("com.github.jikun2008:CheckVersionLib:2.4.5")
 }
 
 afterEvaluate {
