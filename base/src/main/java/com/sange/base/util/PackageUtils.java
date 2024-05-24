@@ -154,8 +154,16 @@ public class PackageUtils {
          * if context is system app, don't need root permission, but should add <uses-permission
          * android:name="android.permission.INSTALL_PACKAGES" /> in mainfest
          */
-        String command = "LD_LIBRARY_PATH=/vendor/lib*:/system/lib* pm install " +
-                (pmParams == null ? "" : pmParams) + " --user 0 " + filePath.replace(" ", "\\ ");
+        String command;
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT){// Android 4.4
+            command = "LD_LIBRARY_PATH=/vendor/lib*:/system/lib* pm install " +
+                (pmParams == null ? "" : pmParams) + " " + filePath.replace(" ", "\\ ");
+        }else{// Android 5.0+
+            command = "LD_LIBRARY_PATH=/vendor/lib*:/system/lib* pm install " +
+                    (pmParams == null ? "" : pmParams) + " --user 0 " + filePath.replace(" ", "\\ ");
+        }
+//        String command = "LD_LIBRARY_PATH=/vendor/lib*:/system/lib* pm install " +
+//                (pmParams == null ? "" : pmParams) + " --user 0 " + filePath.replace(" ", "\\ ");
 //                (pmParams == null ? "" : pmParams) + " " + filePath.replace(" ", "\\ ");
         CommandResult commandResult = ShellUtils.execCommand(command, !isSystemApplication(context), true);
         if (commandResult.successMsg != null
