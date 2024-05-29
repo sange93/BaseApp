@@ -83,7 +83,7 @@ object LogUtils{
      */
     private fun processHead(msg: String): String{
         val stackTrace = Throwable().stackTrace
-        val stackIndex = 1 + mStackOffset
+        val stackIndex = 3 + mStackOffset
         val targetElement = stackTrace[stackIndex].toString()
         val tName = Thread.currentThread().name
         return "┌────────────────────────────────────────────────────────\n" +
