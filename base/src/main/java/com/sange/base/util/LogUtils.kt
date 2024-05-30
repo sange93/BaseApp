@@ -30,7 +30,7 @@ object LogUtils{
      */
     fun v(tag: String, msg: String) {
         if (BaseApplication.isDebugMode) {
-            Log.v(tag, msg)
+            Log.v(tag, processHead(msg))
         }
     }
 
@@ -46,7 +46,7 @@ object LogUtils{
      */
     fun d(tag: String, msg: String) {
         if (BaseApplication.isDebugMode) {
-            Log.d(tag, msg)
+            Log.d(tag, processHead(msg))
         }
     }
 
@@ -54,7 +54,7 @@ object LogUtils{
      * Info:例如一些运行时的状态信息，这些状态信息在出现问题的时候能提供帮助。
      */
     fun i(tag: String, msg: String) {
-        Log.i(tag, msg)
+        Log.i(tag, processHead(msg))
     }
 
     /**
