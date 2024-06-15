@@ -3,9 +3,15 @@ pluginManagement {
         maven { setUrl("https://maven.aliyun.com/repository/public") }
         maven { setUrl("https://maven.aliyun.com/repository/google") }
         maven { setUrl("https://maven.aliyun.com/repository/gradle-plugin") }
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         gradlePluginPortal()
         mavenCentral()
-        google()
     }
 }
 
@@ -15,8 +21,8 @@ dependencyResolutionManagement {
     repositories {
         maven { setUrl("https://maven.aliyun.com/repository/public") }
         maven { setUrl("https://maven.aliyun.com/repository/google") }
-        mavenCentral()
         google()
+        mavenCentral()
         maven { setUrl("https://jitpack.io") }
     }
 }

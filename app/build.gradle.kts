@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sange.baseapp"
+    namespace = "com.s.demo"
     compileSdk = 34
 
     defaultConfig {
@@ -33,11 +33,14 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    /*packagingOptions {
-        resources {
-            excludes += ['META-INF/library_release.kotlin_module']
-        }
-    }*/
+    buildFeatures {
+        buildConfig = true
+        compose = true
+    }
+    composeOptions {
+        // kotlin编译器与kotlin版本对应关系：https://developer.android.google.cn/jetpack/androidx/releases/compose-kotlin#kts
+        kotlinCompilerExtensionVersion = "1.5.13"
+    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.sange93"
-version = "1.1.9"
+version = "1.1.10"
 
 android {
     namespace = "com.sange.base"
@@ -93,6 +93,7 @@ dependencies {
     api(libs.accompanist.permissions)
 //    // 权限请求框架 适配Android 14 https://github.com/getActivity/XXPermissions
 //    api 'com.github.getActivity:XXPermissions:18.5'
+    api(libs.xxPermissions)
     // PermissionX 权限请求库
 //    api("com.guolindev.permissionx:permissionx:1.7.1")
 
@@ -126,7 +127,7 @@ afterEvaluate {
             create<MavenPublication>("release"){
                 groupId = "com.github.sange93"
                 artifactId = "BaseApp"
-                version = "1.1.9"
+                version = "1.1.10"
                 from(components["release"])
             }
         }

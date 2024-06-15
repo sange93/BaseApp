@@ -19,6 +19,7 @@ activity = "1.9.0"
 constraintlayout = "2.1.4"
 navigationCompose = "2.7.5"
 viewpager2 = "1.0.0"
+xxPermissions = "18.63"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistVersion" }
@@ -53,6 +54,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+xxPermissions = { module = "com.github.getActivity:XXPermissions", version.ref = "xxPermissions" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
