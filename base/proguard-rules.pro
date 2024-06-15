@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#--------https://github.com/getActivity/XXPermissions---start---------
+-keep class com.hjq.permissions.** {*;}
+#--------https://github.com/getActivity/XXPermissions---end---------
