@@ -108,7 +108,7 @@ public final class PermissionInterceptor implements OnPermissionInterceptor {
             }, 300);
         } else {
             // 注意：这里的 Dialog 只是示例，没有用 DialogFragment 来处理 Dialog 生命周期
-            new AlertDialog.Builder(activity)
+            new AlertDialog.Builder(activity, R.style.AlertDialog)
                     .setTitle(R.string.common_permission_description)
                     .setMessage(mUseDesc)
                     .setCancelable(false)
@@ -249,7 +249,7 @@ public final class PermissionInterceptor implements OnPermissionInterceptor {
         }
 
         // 这里的 Dialog 只是示例，没有用 DialogFragment 来处理 Dialog 生命周期
-        new AlertDialog.Builder(activity)
+        new AlertDialog.Builder(activity, R.style.AlertDialog)
                 .setTitle(R.string.common_permission_alert)
                 .setMessage(message)
                 .setPositiveButton(R.string.common_permission_goto_setting_page, (dialog, which) -> {
