@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.sange93"
-version = "1.1.11"
+version = "1.1.12"
 
 android {
     namespace = "com.sange.base"
@@ -127,7 +127,7 @@ afterEvaluate {
             create<MavenPublication>("release"){
                 groupId = "com.github.sange93"
                 artifactId = "BaseApp"
-                version = "1.1.11"
+                version = "1.1.12"
                 from(components["release"])
             }
         }
