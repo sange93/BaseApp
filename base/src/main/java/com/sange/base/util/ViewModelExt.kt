@@ -17,22 +17,19 @@ fun ViewModel.launch(
     block: suspend CoroutineScope.() -> Unit,
     onError: (e: Throwable) -> Unit = {},
     onComplete: () -> Unit = {}
-) {
-    // viewModelScope 的协程范围是Main UI主线程
-    viewModelScope.launch(
-        CoroutineExceptionHandler { _, throwable ->
-            run {
-                // 这里统一处理错误
-                ExceptionUtil.getExceptionHandler().catchException(throwable)
-                onError(throwable)
-            }
+) = viewModelScope.launch(
+    CoroutineExceptionHandler { _, throwable ->
+        run {
+            // 这里统一处理错误
+            ExceptionUtil.getExceptionHandler().catchException(throwable)
+            onError(throwable)
         }
-    ) {
-        try {
-            block.invoke(this)
-        } finally {
-            onComplete()
-        }
+    }
+) {// viewModelScope 的协程范围是Main UI主线程
+    try {
+        block.invoke(this)
+    } finally {
+        onComplete()
     }
 }
 
