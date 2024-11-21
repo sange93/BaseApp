@@ -1,15 +1,16 @@
 package com.sange.base.util
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.os.IBinder
 import android.os.Looper
 import android.os.ResultReceiver
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.fragment.app.FragmentActivity
 import com.sange.base.BaseApplication
 
 /**
@@ -23,7 +24,7 @@ object KeyboardUtil {
      * 点击空白区域隐藏键盘
      * 在界面的dispatchTouchEvent(ev: MotionEvent?)方法中调用
      */
-    fun clickAreaHideKeyboard(ev: MotionEvent?, activity: FragmentActivity) {
+    fun clickAreaHideKeyboard(ev: MotionEvent?, activity: Activity) {
         ev?.let {
             if (it.action == MotionEvent.ACTION_DOWN) {
                 val v = activity.currentFocus
@@ -89,11 +90,25 @@ object KeyboardUtil {
     /**
      * 隐藏软键盘
      */
-    fun hideSoftInput(activity: FragmentActivity) {
+    fun hideSoftInput(activity: Activity) {
         activity.currentFocus?.let {
-            val imm: InputMethodManager =
-                activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(it.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+            hideSoftInput(activity, it.windowToken)
         }
+    }
+
+    /**
+     * 隐藏软键盘
+     */
+    fun hideSoftInput(view: View) {
+        hideSoftInput(view.context, view.windowToken)
+    }
+
+    /**
+     * 隐藏软键盘
+     */
+    fun hideSoftInput(context: Context, windowToken: IBinder) {
+        val imm: InputMethodManager =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 }
