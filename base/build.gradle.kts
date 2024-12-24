@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.sange93"
-version = "1.1.15"
+version = "1.1.16"
 
 android {
     namespace = "com.sange.base"
@@ -63,7 +63,7 @@ dependencies {
     api(libs.androidx.activity.compose)
     // compose最新Bom版本：https://developer.android.google.cn/jetpack/compose/bom?hl=en
     // Bom内Lib详细版本：https://developer.android.google.cn/jetpack/compose/bom/bom-mapping?hl=en
-    val composeBom = platform("androidx.compose:compose-bom:2024.05.00")
+    val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
     api(composeBom)
     api(libs.androidx.ui)
     api(libs.androidx.ui.graphics)
@@ -127,7 +127,7 @@ afterEvaluate {
             create<MavenPublication>("release"){
                 groupId = "com.github.sange93"
                 artifactId = "BaseApp"
-                version = "1.1.15"
+                version = "1.1.16"
                 from(components["release"])
             }
         }
