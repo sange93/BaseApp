@@ -3,7 +3,6 @@ package com.sange.base.util
 import android.os.Build
 import android.os.Handler
 import android.widget.Toast
-import com.sange.base.BaseApplication
 import java.lang.reflect.Field
 
 /**
@@ -39,7 +38,7 @@ object ToastUtils {
     }
 
     private fun show(msg: String, duration: Int) {
-        val toast = Toast.makeText(BaseApplication.instance, msg, duration)
+        val toast = Toast.makeText(Base.getContext(), msg, duration)
         setHook(toast)
         toast.show()
     }

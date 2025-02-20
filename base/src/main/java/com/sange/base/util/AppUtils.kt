@@ -2,13 +2,22 @@ package com.sange.base.util
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 
 /**
  * APP高级工具类
  *
  * @author ssq
  */
-class AppUtils {
+object AppUtils {
+    // 是否为debug模式
+    val isDebugMode: Boolean by lazy { isDebugMode() }
+
+    /**
+     * 获取是否debug版本
+     */
+    private fun isDebugMode() =
+        Base.getContext().applicationInfo != null && Base.getContext().applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
 
     /**
      * 重启app
@@ -30,19 +39,29 @@ class AppUtils {
     /**
      * 重启Android
      */
-    fun reboot(){
+    fun reboot() {
         val commandResult: ShellUtils.CommandResult = ShellUtils.execCommand("reboot", true, true)
-        LogUtils.e(StringBuilder().append("reboot() successMsg:").append(commandResult.successMsg)
-            .append(", ErrorMsg:").append(commandResult.errorMsg).toString())
+        LogUtils.e(
+            StringBuilder().append("reboot() successMsg:").append(commandResult.successMsg)
+                .append(", ErrorMsg:").append(commandResult.errorMsg).toString()
+        )
     }
 
     /**
      * 延时重启APP
      */
-    fun restartApp(){
+    fun restartApp() {
         val cmd = "sleep 5; am start -N com.zjzn.vending.MainActivity"
         val commandResult = ShellUtils.execCommand(cmd, true, true)
-        LogUtils.e(StringBuilder().append("restartApp() successMsg:").append(commandResult.successMsg)
-            .append(", ErrorMsg:").append(commandResult.errorMsg).toString())
+        LogUtils.e(
+            StringBuilder().append("restartApp() successMsg:").append(commandResult.successMsg)
+                .append(", ErrorMsg:").append(commandResult.errorMsg).toString()
+        )
     }
+
+    /**
+     * 是否为APP进程
+     * @param appPackageName APP包名
+     */
+    fun isAppProcess(appPackageName: String) = appPackageName == ProcessUtils.getProcessName(Base.getContext(), android.os.Process.myPid())
 }

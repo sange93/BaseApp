@@ -5,7 +5,7 @@ import android.os.StrictMode
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
-import com.sange.base.BaseApplication
+import com.sange.base.util.AppUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -46,7 +46,7 @@ abstract class BaseActivity<VB : ViewBinding> : AppCompatActivity(),
         setContentView(mBinding.root)
         initView()
         // 严格模式测试（生产环境不要开启）
-        enableStrictMode(mStrictModeEnable && BaseApplication.isDebugMode)
+        enableStrictMode(mStrictModeEnable && AppUtils.isDebugMode)
     }
 
     /**

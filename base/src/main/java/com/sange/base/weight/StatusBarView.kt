@@ -3,7 +3,7 @@ package com.sange.base.weight
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import com.sange.base.BaseApplication
+import com.sange.base.util.Base
 import com.sange.base.util.UnitUtils
 
 /**
@@ -14,7 +14,7 @@ class StatusBarView : View {
     /**
      * 系统状态栏高度（刘海屏高度）
      */
-    private val mHeight by lazy { UnitUtils.dp2px(BaseApplication.instance, 20f) }
+    private val mHeight by lazy { UnitUtils.dp2px(Base.getContext(), 20f) }
 
     constructor(context: Context) : super(context)
 

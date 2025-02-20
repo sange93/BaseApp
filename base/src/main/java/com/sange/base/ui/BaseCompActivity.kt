@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.view.MotionEvent
 import androidx.activity.ComponentActivity
-import com.sange.base.BaseApplication
+import com.sange.base.util.AppUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -26,7 +26,7 @@ abstract class BaseCompActivity : ComponentActivity(), CoroutineScope by MainSco
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 严格模式测试（生产环境不要开启）
-        enableStrictMode(mStrictModeEnable && BaseApplication.isDebugMode)
+        enableStrictMode(mStrictModeEnable && AppUtils.isDebugMode)
     }
 
     /**

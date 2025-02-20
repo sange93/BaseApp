@@ -2,7 +2,8 @@ package com.sange.base
 
 import android.app.Application
 import android.content.pm.ApplicationInfo
-import com.sange.base.util.ProcessUtils
+import com.sange.base.util.AppUtils
+import com.sange.base.util.Base
 
 
 /**
@@ -13,17 +14,21 @@ import com.sange.base.util.ProcessUtils
 abstract class BaseApplication : Application() {
     companion object {
         // app实例
+        @Deprecated("已过时，计划1.3.0将会移除", ReplaceWith("Base.getContext()"))
         lateinit var instance: BaseApplication
 
         // 是否为debug模式
+        @Deprecated("已过时，计划1.3.0将会移除", ReplaceWith("AppUtils.isDebugMode"))
         var isDebugMode: Boolean = false
     }
 
     override fun onCreate() {
         super.onCreate()
         instance = this
+        Base.init(this)
+
         //处理Application的onCreate多次调用问题,通过进程的名称来区分执行哪些具体逻辑。
-        if (getAppPackageName() == ProcessUtils.getProcessName(this, android.os.Process.myPid())) {
+        if (AppUtils.isAppProcess(getAppPackageName())) {
             initApp()
             // TODO 延迟方法  待延迟实现
             delayInitApp()
@@ -54,6 +59,7 @@ abstract class BaseApplication : Application() {
      * 获取是否debug版本
      */
     private fun initDebug() {
-        isDebugMode = instance.applicationInfo != null && instance.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+        isDebugMode =
+            instance.applicationInfo != null && instance.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
     }
 }

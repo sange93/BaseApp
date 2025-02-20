@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.fragment.app.FragmentActivity
-import com.sange.base.BaseApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -47,9 +46,9 @@ object FileUtils {
         // 判断外部存储状态可用，或者外部存储不可移除
         if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState() || !Environment.isExternalStorageRemovable()) {
             // 外部存储可用
-            BaseApplication.instance.externalCacheDir ?: BaseApplication.instance.cacheDir
+            Base.getContext().externalCacheDir ?: Base.getContext().cacheDir
         } else {
-            BaseApplication.instance.cacheDir
+            Base.getContext().cacheDir
         }
 
     /**
@@ -74,7 +73,7 @@ object FileUtils {
         var fos: FileOutputStream? = null
         var fis: FileInputStream? = null
         try {
-            BaseApplication.instance.contentResolver.openFileDescriptor(fromUri, "r")?.let {
+            Base.getContext().contentResolver?.openFileDescriptor(fromUri, "r")?.let {
                 val bytes = ByteArray(1024)
                 fis = FileInputStream(it.fileDescriptor)
                 fos = FileOutputStream(file)
@@ -213,7 +212,7 @@ object FileUtils {
         var inputStream: InputStream? = null
         val outputStream = ByteArrayOutputStream()
         try {
-            inputStream = BaseApplication.instance.assets.open(assetsFileName)
+            inputStream = Base.getContext().assets.open(assetsFileName)
             result = readData(inputStream, outputStream)
         } catch (e: IOException) {
             e.printStackTrace()
@@ -236,7 +235,7 @@ object FileUtils {
         var fis: FileInputStream? = null
         val outputStream = ByteArrayOutputStream()
         try {
-            BaseApplication.instance.contentResolver.openFileDescriptor(uri, "r")?.let {
+            Base.getContext().contentResolver.openFileDescriptor(uri, "r")?.let {
                 fis = FileInputStream(it.fileDescriptor)
                 fis?.let { inputStream -> result = readData(inputStream, outputStream) }
             }
@@ -328,7 +327,7 @@ object FileUtils {
         }
         //执行insert操作，向系统文件夹中添加文件
         //EXTERNAL_CONTENT_URI代表外部存储器，该值不变
-        val contentResolver = BaseApplication.instance.contentResolver
+        val contentResolver = Base.getContext().contentResolver
         contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)?.let {
             //若生成了uri，则表示该文件添加成功
             //使用流将内容写入该uri中即可

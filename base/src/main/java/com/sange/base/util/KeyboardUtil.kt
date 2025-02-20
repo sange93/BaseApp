@@ -11,7 +11,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import com.sange.base.BaseApplication
 
 /**
  * 键盘工具类
@@ -55,7 +54,7 @@ object KeyboardUtil {
      * 显示软键盘
      */
     fun showSoftInput(view: View) {
-        val imm = BaseApplication.instance.getSystemService(Context.INPUT_METHOD_SERVICE)
+        val imm = Base.getContext().getSystemService(Context.INPUT_METHOD_SERVICE)
         if (imm is InputMethodManager) {
             view.isFocusable = true
             view.isFocusableInTouchMode = true
@@ -81,7 +80,7 @@ object KeyboardUtil {
      * 开关软键盘显示
      */
     private fun toggleSoftInput() {
-        val imm = BaseApplication.instance.getSystemService(Context.INPUT_METHOD_SERVICE)
+        val imm = Base.getContext().getSystemService(Context.INPUT_METHOD_SERVICE)
         if (imm is InputMethodManager) {
             imm.toggleSoftInput(0, 0)
         }

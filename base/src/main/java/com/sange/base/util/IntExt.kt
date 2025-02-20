@@ -1,7 +1,5 @@
 package com.sange.base.util
 
-import com.sange.base.BaseApplication
-
 /**
  * 将 int 类型数据转成十六进制的字符串，不足 int 类型位数时在前面添“0”以凑足位数
  *
@@ -24,10 +22,10 @@ fun Int.toHex(): String = this.toFullHex().substring(4, 8)
 /**
  * 如果int是string资源ID，可以使用此函数获取文字String
  */
-fun Int.getStringRes(): String = BaseApplication.instance.getString(this)
+fun Int.getStringRes(): String = Base.getContext().getString(this)
 
 /**
  * 如果int是string资源ID，可以使用此函数获取文字String
  * @param formatArgs 格式化参数
  */
-fun Int.getStringRes(vararg formatArgs: Any): String = BaseApplication.instance.getString(this, *formatArgs)
+fun Int.getStringRes(vararg formatArgs: Any): String = Base.getContext().getString(this, *formatArgs)

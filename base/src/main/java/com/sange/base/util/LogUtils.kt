@@ -1,7 +1,6 @@
 package com.sange.base.util
 
 import android.util.Log
-import com.sange.base.BaseApplication
 
 /**
  * 日志工具类
@@ -29,7 +28,7 @@ object LogUtils{
      * Verbose: 开发调试过程中一些详细信息，不应该编译进产品中，只在开发阶段使用。
      */
     fun v(tag: String, msg: String) {
-        if (BaseApplication.isDebugMode) {
+        if (AppUtils.isDebugMode) {
             Log.v(tag, processHead(msg))
         }
     }
@@ -45,7 +44,7 @@ object LogUtils{
      * debug:开发调试。
      */
     fun d(tag: String, msg: String) {
-        if (BaseApplication.isDebugMode) {
+        if (AppUtils.isDebugMode) {
             Log.d(tag, processHead(msg))
         }
     }
