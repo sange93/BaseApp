@@ -11,12 +11,12 @@ import android.content.pm.ApplicationInfo
  */
 object AppUtils {
     // 是否为debug模式
-    val isDebugMode: Boolean by lazy { isDebugMode() }
+    val isDebugMode: Boolean by lazy { isDebug() }
 
     /**
      * 获取是否debug版本
      */
-    private fun isDebugMode() =
+    private fun isDebug() =
         Base.getContext().applicationInfo != null && Base.getContext().applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
 
     /**
