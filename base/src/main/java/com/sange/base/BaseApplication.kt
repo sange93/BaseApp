@@ -7,7 +7,7 @@ import com.sange.base.util.Base
 
 
 /**
- * 基础Application
+ * 基础Application(可选)
  *
  * @author ssq
  */
