@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.view.MotionEvent
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.sange.base.BaseApplication
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -15,7 +16,7 @@ import kotlinx.coroutines.cancel
  *
  * @author ssq
  */
-abstract class BaseCompActivity : ComponentActivity(), CoroutineScope by MainScope() {
+abstract class BaseCompActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     /** 是否分发触摸事件。true 屏幕可点击；false 屏幕不可点击 */
     protected var mIsDispatchTouchEvent = true
