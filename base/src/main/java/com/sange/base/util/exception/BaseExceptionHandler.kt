@@ -2,8 +2,8 @@ package com.sange.base.util.exception
 
 import android.accounts.NetworkErrorException
 import androidx.annotation.StringRes
-import com.sange.base.BaseApplication
 import com.sange.base.R
+import com.sange.base.util.Base
 import com.sange.base.util.ToastUtils
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -67,7 +67,7 @@ open class BaseExceptionHandler : IExceptionHandler {
     private fun showUnknown(e: Throwable) {
         showToast(
             "${
-                BaseApplication.instance.getString(
+                Base.getContext().getString(
                     R.string.base_error_do_something_fail
                 )
             }：${e::class.java.name}"
@@ -79,7 +79,7 @@ open class BaseExceptionHandler : IExceptionHandler {
      */
     protected fun showToast(@StringRes errorMsg: Int, errorCode: Int = -1) {
         showToast(
-            BaseApplication.instance.getString(
+            Base.getContext().getString(
                 errorMsg
             ), errorCode
         )

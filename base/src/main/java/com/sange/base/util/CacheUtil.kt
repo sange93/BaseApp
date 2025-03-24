@@ -1,7 +1,6 @@
 package com.sange.base.util
 
 import android.os.Environment
-import com.sange.base.BaseApplication
 import java.io.File
 import java.math.BigDecimal
 
@@ -21,9 +20,9 @@ object CacheUtil {
      * 获取缓存大小
      */
     fun getTotalCacheSize(): String {
-        var cacheSize = getFolderSize(BaseApplication.instance.cacheDir)
+        var cacheSize = getFolderSize(Base.getContext().cacheDir)
         if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState()) {
-            BaseApplication.instance.externalCacheDir?.let {
+            Base.getContext().externalCacheDir?.let {
                 cacheSize += getFolderSize(it)
             }
         }
@@ -34,9 +33,9 @@ object CacheUtil {
      * 清除所有缓存
      */
     fun clearAllCache() {
-        deleteDir(BaseApplication.instance.cacheDir)
+        deleteDir(Base.getContext().cacheDir)
         if (Environment.MEDIA_MOUNTED == Environment.getExternalStorageState()) {
-            BaseApplication.instance.externalCacheDir?.let { deleteDir(it) }
+            Base.getContext().externalCacheDir?.let { deleteDir(it) }
         }
     }
 
