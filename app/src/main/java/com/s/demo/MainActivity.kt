@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.sange.base.ui.BaseCompActivity
 import com.sange.base.util.Base
@@ -27,6 +28,8 @@ class MainActivity : BaseCompActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Handle the splash screen transition.
+        installSplashScreen()
         // 将内容显示在标题栏下
         WindowCompat.setDecorFitsSystemWindows(window, false)
         mStrictModeEnable = true//TODO 开发模式：严格

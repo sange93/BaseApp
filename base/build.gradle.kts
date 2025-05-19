@@ -1,15 +1,16 @@
 plugins {
-    id("com.android.library")
-    id("kotlin-android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     `maven-publish`
 }
 
 group = "com.github.sange93"
-version = "1.2.2"
+version = "1.2.3"
 
 android {
     namespace = "com.sange.base"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 21
@@ -40,10 +41,6 @@ android {
         // 启用compose
         compose = true
     }
-    composeOptions {
-        // kotlin编译器与kotlin版本对应关系：https://developer.android.google.cn/jetpack/androidx/releases/compose-kotlin#kts
-        kotlinCompilerExtensionVersion = "1.5.13"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -63,7 +60,7 @@ dependencies {
     api(libs.androidx.activity.compose)
     // compose最新Bom版本：https://developer.android.google.cn/jetpack/compose/bom?hl=en
     // Bom内Lib详细版本：https://developer.android.google.cn/jetpack/compose/bom/bom-mapping?hl=en
-    val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
+    val composeBom = platform("androidx.compose:compose-bom:2025.05.00")
     api(composeBom)
     api(libs.androidx.ui)
     api(libs.androidx.ui.graphics)
@@ -127,7 +124,7 @@ afterEvaluate {
             create<MavenPublication>("release"){
                 groupId = "com.github.sange93"
                 artifactId = "BaseApp"
-                version = "1.2.2"
+                version = "1.2.3"
                 from(components["release"])
             }
         }
