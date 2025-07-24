@@ -1,7 +1,7 @@
 [versions]
 accompanistVersion = "0.37.3"
 activityCompose = "1.9.0"
-agp = "8.10.0"
+agp = "8.11.1"
 baserecyclerviewadapterhelperVersion = "3.0.6"
 checkversionlibVersion = "2.5.0"
 coreSplashscreenVersion = "1.2.0-beta02"
