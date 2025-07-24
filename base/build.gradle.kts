@@ -6,11 +6,11 @@ plugins {
 }
 
 group = "com.github.sange93"
-version = "1.2.3"
+version = "1.2.4"
 
 android {
     namespace = "com.sange.base"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 21
@@ -124,7 +124,7 @@ afterEvaluate {
             create<MavenPublication>("release"){
                 groupId = "com.github.sange93"
                 artifactId = "BaseApp"
-                version = "1.2.3"
+                version = "1.2.4"
                 from(components["release"])
             }
         }

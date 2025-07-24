@@ -142,5 +142,24 @@ class XXPermissionsImpl: IPermissionsUtils {
             })
     }
 
+    override fun requestStorage(context: Context, onAllGranted: () -> Unit) {
+        XXPermissions.with(context)
+            .permission(Permission.Group.STORAGE)
+            .interceptor(PermissionInterceptor(IPermissionsUtils.mStorageUseDesc))
+            .request(object : OnPermissionCallback {
+                override fun onGranted(permissions: MutableList<String>, all: Boolean) {
+                    if(all){
+                        onAllGranted()
+                    }
+                }
+
+                override fun onDenied(
+                    permissions: MutableList<String>,
+                    doNotAskAgain: Boolean
+                ) {
+                }
+            })
+    }
+
     override fun isGrantedCamera(context: Context): Boolean = XXPermissions.isGranted(context, Permission.CAMERA)
 }

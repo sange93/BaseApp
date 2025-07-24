@@ -20,6 +20,8 @@ interface IPermissionsUtils {
         var mLocationUseDesc = ""
         /** 蓝牙 使用描述 */
         var mBluetoothUseDesc = ""
+        /** 存储 使用描述 */
+        var mStorageUseDesc = ""
     }
 
     /**
@@ -58,6 +60,12 @@ interface IPermissionsUtils {
      * @param onAllGranted 全部同意
      */
     fun requestBluetooth(context: Context, onAllGranted: () -> Unit)
+
+    /**
+     * 请求存储权限
+     * @param onAllGranted 全部同意
+     */
+    fun requestStorage(context: Context, onAllGranted: () -> Unit)
 
     /**
      * 检查相机权限 是否同意
