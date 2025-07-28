@@ -62,10 +62,10 @@ interface IPermissionsUtils {
     fun requestBluetooth(context: Context, onAllGranted: () -> Unit)
 
     /**
-     * 请求存储权限
+     * 请求写存储权限
      * @param onAllGranted 全部同意
      */
-    fun requestStorage(context: Context, onAllGranted: () -> Unit)
+    fun requestWriteStorage(context: Context, onAllGranted: () -> Unit)
 
     /**
      * 检查相机权限 是否同意

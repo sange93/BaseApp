@@ -142,9 +142,9 @@ class XXPermissionsImpl: IPermissionsUtils {
             })
     }
 
-    override fun requestStorage(context: Context, onAllGranted: () -> Unit) {
+    override fun requestWriteStorage(context: Context, onAllGranted: () -> Unit) {
         XXPermissions.with(context)
-            .permission(Permission.Group.STORAGE)
+            .permission(Permission.WRITE_EXTERNAL_STORAGE)
             .interceptor(PermissionInterceptor(IPermissionsUtils.mStorageUseDesc))
             .request(object : OnPermissionCallback {
                 override fun onGranted(permissions: MutableList<String>, all: Boolean) {
