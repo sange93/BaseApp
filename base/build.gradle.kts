@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.LibraryExtension
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -8,7 +10,7 @@ plugins {
 group = "com.github.sange93"
 version = "1.2.7"
 
-android {
+configure<LibraryExtension> {
     namespace = "com.sange.base"
     compileSdk = 36
 
@@ -29,11 +31,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures{
         // 启用ViewBinding
