@@ -7,8 +7,8 @@ plugins {
     `maven-publish`
 }
 
-group = "com.github.sange93"
-version = "1.2.7"
+//group = "com.github.sange93"
+//version = "1.2.7"
 
 configure<LibraryExtension> {
     namespace = "com.sange.base"
@@ -123,7 +123,7 @@ afterEvaluate {
             create<MavenPublication>("release"){
                 groupId = "com.github.sange93"
                 artifactId = "BaseApp"
-                version = "1.2.7"
+                version = "1.2.8"
                 from(components["release"])
             }
         }
