@@ -1,12 +1,12 @@
 [versions]
 accompanistVersion = "0.37.3"
 activityCompose = "1.9.0"
-agp = "9.2.0"
+agp = "9.3.1"
 baserecyclerviewadapterhelperVersion = "3.0.6"
 checkversionlibVersion = "2.5.0"
 coreSplashscreenVersion = "1.2.0-beta02"
-coroutines = "1.10.2"
-kotlin = "2.3.21"
+coroutines = "1.11.0"
+kotlin = "2.4.10"
 #ksp = "2.0.21-1.0.28"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -19,7 +19,7 @@ material = "1.12.0"
 constraintlayout = "2.2.0"
 navigationCompose = "2.7.5"
 viewpager2 = "1.0.0"
-xxPermissions = "20.0"
+xxPermissions = "28.3"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistVersion" }
@@ -54,12 +54,12 @@ material = { group = "com.google.android.material", name = "material", version.r
 #androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+# https://github.com/getActivity/XXPermissions/releases
 xxPermissions = { module = "com.github.getActivity:XXPermissions", version.ref = "xxPermissions" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 #ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 

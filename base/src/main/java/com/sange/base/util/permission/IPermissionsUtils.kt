@@ -9,21 +9,6 @@ import android.content.Context
  */
 interface IPermissionsUtils {
 
-    companion object{
-        /** 相机 使用描述 */
-        var mCameraUseDesc = ""
-        /** 录音 使用描述 */
-        var mRecordUseDesc = ""
-        /** 相册 使用描述 */
-        var mImagesUseDesc = ""
-        /** 定位 使用描述 */
-        var mLocationUseDesc = ""
-        /** 蓝牙 使用描述 */
-        var mBluetoothUseDesc = ""
-        /** 存储 使用描述 */
-        var mStorageUseDesc = ""
-    }
-
     /**
      * 请求相机权限
      * @param onAllGranted 全部同意

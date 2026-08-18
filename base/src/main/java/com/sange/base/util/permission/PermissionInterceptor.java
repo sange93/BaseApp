@@ -1,292 +1,285 @@
 package com.sange.base.util.permission;
 
 import android.app.Activity;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-
+import androidx.appcompat.app.AppCompatActivity;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.OnPermissionInterceptor;
-import com.hjq.permissions.OnPermissionPageCallback;
-import com.hjq.permissions.Permission;
-import com.hjq.permissions.PermissionFragment;
 import com.hjq.permissions.XXPermissions;
 import com.sange.base.R;
+import com.hjq.permissions.permission.PermissionGroups;
+import com.hjq.permissions.permission.PermissionNames;
+import com.hjq.permissions.permission.base.IPermission;
 import com.sange.base.util.ToastUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/XXPermissions
+ *    github : <a href="https://github.com/getActivity/XXPermissions">XXPermissions</a>
  *    time   : 2021/01/04
  *    desc   : 权限申请拦截器
  */
 public final class PermissionInterceptor implements OnPermissionInterceptor {
 
-    public static final Handler HANDLER = new Handler(Looper.getMainLooper());
+    @Override
+    public void onRequestPermissionEnd(@NonNull Activity activity, boolean skipRequest,
+                                       @NonNull List<IPermission> requestList,
+                                       @NonNull List<IPermission> grantedList,
+                                       @NonNull List<IPermission> deniedList,
+                                       @Nullable OnPermissionCallback callback) {
+        if (callback != null) {
+            callback.onPermissionResult(grantedList, deniedList);
+        }
 
-    /** 权限申请标记 */
-    private boolean mRequestFlag;
+        if (deniedList.isEmpty()) {
+            return;
+        }
+        boolean doNotAskAgain = XXPermissions.isDoNotAskAgainPermissions(activity, deniedList);
+        String permissionHint = generatePermissionHint(activity, deniedList, doNotAskAgain);
+        if (!doNotAskAgain) {
+            // 如果没有勾选不再询问选项，就弹 Toast 提示给用户
+            ToastUtils.INSTANCE.showShort(permissionHint);
+            return;
+        }
 
-    /** 权限申请说明 Popup */
-    private PopupWindow mPermissionPopup;
-    /** 权限使用说明 */
-    private String mUseDesc = "";
+        // 如果勾选了不再询问选项，就弹 Dialog 引导用户去授权
+        showPermissionSettingDialog(activity, requestList, deniedList, callback, permissionHint);
+    }
 
-    public PermissionInterceptor(){
+    private void showPermissionSettingDialog(@NonNull Activity activity,
+                                             @NonNull List<IPermission> requestList,
+                                             @NonNull List<IPermission> deniedList,
+                                             @Nullable OnPermissionCallback callback,
+                                             @NonNull String permissionHint) {
+        if (activity.isFinishing() || activity.isDestroyed()) {
+            return;
+        }
+
+        String dialogTitle  = activity.getString(R.string.common_permission_alert);
+        String confirmButtonText = activity.getString(R.string.common_permission_go_to_authorization);
+        DialogInterface.OnClickListener confirmListener = (dialog, which) -> {
+            dialog.dismiss();
+            XXPermissions.startPermissionActivity(activity, deniedList, new OnPermissionCallback() {
+
+                @Override
+                public void onPermissionResult(@NonNull List<IPermission> grantedList, @NonNull List<IPermission> deniedList) {
+                    List<IPermission> latestDeniedList = XXPermissions.getDeniedPermissions(activity, requestList);
+                    boolean allGranted = latestDeniedList.isEmpty();
+                    if (!allGranted) {
+                        // 递归显示对话框，让提示用户授权，只不过对话框是可取消的，用户不想授权了，随时可以点击返回键或者对话框蒙层来取消显示
+                        showPermissionSettingDialog(activity, requestList, latestDeniedList, callback,
+                                generatePermissionHint(activity, latestDeniedList, true));
+                        return;
+                    }
+
+                    if (callback == null) {
+                        return;
+                    }
+                    // 用户全部授权了，回调成功给外层监听器，免得用户还要再发起权限申请
+                    callback.onPermissionResult(requestList, latestDeniedList);
+                }
+            });
+        };
+
+        // 另外这里需要判断 Activity 的类型来申请权限，这是因为只有 AppCompatActivity 才能调用 AndroidX 库的 AlertDialog 来显示，否则会出现报错
+        // java.lang.IllegalStateException: You need to use a Theme.AppCompat theme (or descendant) with this activity
+        // 为什么不直接用系统包 AlertDialog 来显示，而是两套规则？因为系统包 AlertDialog 是系统自带的类，不同 Android 版本展现的样式可能不太一样
+        // 如果这个 Android 版本比较低，那么这个对话框的样式就会变得很丑，准确来讲也不能说丑，而是当时系统的 UI 设计就是那样，它只是跟随系统的样式而已
+        Dialog dialog;
+        if (activity instanceof AppCompatActivity) {
+            dialog = new AlertDialog.Builder(activity)
+                    .setTitle(dialogTitle)
+                    .setMessage(permissionHint)
+                    // 这里需要设置成可取消的，这样用户不想授权了，随时可以点击返回键或者对话框蒙层来取消显示 Dialog
+                    .setCancelable(true)
+                    .setPositiveButton(confirmButtonText, confirmListener)
+                    .create();
+        } else {
+            dialog = new Builder(activity)
+                    .setTitle(dialogTitle)
+                    .setMessage(permissionHint)
+                    // 这里需要设置成可取消的，这样用户不想授权了，随时可以点击返回键或者对话框蒙层来取消显示 Dialog
+                    .setCancelable(true)
+                    .setPositiveButton(confirmButtonText, confirmListener)
+                    .create();
+        }
+        dialog.show();
+
+        // 解决在小米14手机，权限提示窗位置偏移 ↓↓↓
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+            layoutParams.copyFrom(window.getAttributes());
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT; // 全屏宽度
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(layoutParams);
+        }
+        // 解决在小米14手机，权限提示窗位置偏移 ↑↑↑
+
+        // 将 Activity 和 Dialog 生命周期绑定在一起，避免可能会出现的内存泄漏
+        // 当然如果上面创建的 Dialog 已经有做了生命周期管理，则不需要执行下面这行代码
+        WindowLifecycleManager.bindDialogLifecycle(activity, dialog);
     }
 
     /**
-     *
-     * @param useDesc 使用说明
+     * 生成权限提示文案
      */
-    public PermissionInterceptor(String useDesc){
-        mUseDesc = useDesc;
-    }
-
-    @Override
-    public void launchPermissionRequest(@NonNull Activity activity, @NonNull List<String> allPermissions, @Nullable OnPermissionCallback callback) {
-        mRequestFlag = true;
-        List<String> deniedPermissions = XXPermissions.getDenied(activity, allPermissions);
-        if(mUseDesc.isEmpty()){
-            mUseDesc = activity.getString(R.string.common_permission_message, PermissionNameConvert.getPermissionString(activity, deniedPermissions));
-        }
-
-        ViewGroup decorView = (ViewGroup) activity.getWindow().getDecorView();
-        int activityOrientation = activity.getResources().getConfiguration().orientation;
-
-        boolean showPopupWindow = activityOrientation == Configuration.ORIENTATION_PORTRAIT;
-        for (String permission : allPermissions) {
-            if (!XXPermissions.isSpecial(permission)) {
+    @NonNull
+    private String generatePermissionHint(@NonNull Activity activity, @NonNull List<IPermission> deniedList, boolean doNotAskAgain) {
+        int deniedPermissionCount = deniedList.size();
+        int deniedLocationPermissionCount = 0;
+        int deniedSensorsPermissionCount = 0;
+        int deniedHealthPermissionCount = 0;
+        for (IPermission deniedPermission : deniedList) {
+            String permissionGroup = deniedPermission.getPermissionGroup(activity);
+            if (TextUtils.isEmpty(permissionGroup)) {
                 continue;
             }
-            if (XXPermissions.isGranted(activity, permission)) {
-                continue;
+            if (PermissionGroups.LOCATION.equals(permissionGroup)) {
+                deniedLocationPermissionCount++;
+            } else if (PermissionGroups.SENSORS.equals(permissionGroup)) {
+                deniedSensorsPermissionCount++;
+            } else if (XXPermissions.isHealthPermission(deniedPermission)) {
+                deniedHealthPermissionCount++;
             }
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R &&
-                    TextUtils.equals(Permission.MANAGE_EXTERNAL_STORAGE, permission)) {
-                continue;
-            }
-            // 如果申请的权限带有特殊权限，并且还没有授予的话
-            // 就不用 PopupWindow 对话框来显示，而是用 Dialog 来显示
-            showPopupWindow = false;
-            break;
         }
 
-        if (showPopupWindow) {
-            PermissionFragment.launch(activity, new ArrayList<>(allPermissions), this, callback);
-            // 延迟 300 毫秒是为了避免出现 PopupWindow 显示然后立马消失的情况
-            // 因为框架没有办法在还没有申请权限的情况下，去判断权限是否永久拒绝了，必须要在发起权限申请之后
-            // 所以只能通过延迟显示 PopupWindow 来做这件事，如果 300 毫秒内权限申请没有结束，证明本次申请的权限没有永久拒绝
-            HANDLER.postDelayed(() -> {
-                if (!mRequestFlag) {
-                    return;
+        if (deniedLocationPermissionCount == deniedPermissionCount && VERSION.SDK_INT >= VERSION_CODES.Q) {
+            if (deniedLocationPermissionCount == 1) {
+                if (XXPermissions.equalsPermission(deniedList.get(0), PermissionNames.ACCESS_BACKGROUND_LOCATION)) {
+                    return activity.getString(R.string.common_permission_fail_hint_1,
+                            activity.getString(R.string.common_permission_location_background),
+                            getBackgroundPermissionOptionLabel(activity));
+                } else if (VERSION.SDK_INT >= VERSION_CODES.S &&
+                        XXPermissions.equalsPermission(deniedList.get(0), PermissionNames.ACCESS_FINE_LOCATION)) {
+                    // 如果请求的定位权限中，既包含了精确定位权限，又包含了模糊定位权限或者后台定位权限，
+                    // 但是用户只同意了模糊定位权限的情况或者后台定位权限，并没有同意精确定位权限的情况，就提示用户开启确切位置选项
+                    // 需要注意的是 Android 12 才将模糊定位权限和精确定位权限的授权选项进行分拆，之前的版本没有区分得那么仔细
+                    return activity.getString(R.string.common_permission_fail_hint_3,
+                            activity.getString(R.string.common_permission_location_fine),
+                            activity.getString(R.string.common_permission_location_fine_option));
                 }
-                if (activity.isFinishing() ||
-                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && activity.isDestroyed())) {
-                    return;
-                }
-                showPopupWindow(activity, decorView, mUseDesc);
-            }, 300);
-        } else {
-            // 注意：这里的 Dialog 只是示例，没有用 DialogFragment 来处理 Dialog 生命周期
-            new AlertDialog.Builder(activity, R.style.AlertDialog)
-                    .setTitle(R.string.common_permission_description)
-                    .setMessage(mUseDesc)
-                    .setCancelable(false)
-                    .setPositiveButton(R.string.common_permission_granted, (dialog, which) -> {
-                        dialog.dismiss();
-                        PermissionFragment.launch(activity, new ArrayList<>(allPermissions),
-                                PermissionInterceptor.this, callback);
-                    })
-                    .setNegativeButton(R.string.common_permission_denied, (dialog, which) -> {
-                        dialog.dismiss();
-                        if (callback == null) {
-                            return;
-                        }
-                        callback.onDenied(deniedPermissions, false);
-                    })
-                    .show();
-        }
-    }
-
-    @Override
-    public void grantedPermissionRequest(@NonNull Activity activity, @NonNull List<String> allPermissions,
-                                         @NonNull List<String> grantedPermissions, boolean allGranted,
-                                         @Nullable OnPermissionCallback callback) {
-        if (callback == null) {
-            return;
-        }
-        callback.onGranted(grantedPermissions, allGranted);
-    }
-
-    @Override
-    public void deniedPermissionRequest(@NonNull Activity activity, @NonNull List<String> allPermissions,
-                                        @NonNull List<String> deniedPermissions, boolean doNotAskAgain,
-                                        @Nullable OnPermissionCallback callback) {
-        if (callback != null) {
-            callback.onDenied(deniedPermissions, doNotAskAgain);
-        }
-
-        if (doNotAskAgain) {
-            if (deniedPermissions.size() == 1 && Permission.ACCESS_MEDIA_LOCATION.equals(deniedPermissions.get(0))) {
-                ToastUtils.INSTANCE.showShort(activity.getString(R.string.common_permission_media_location_hint_fail));
-                return;
-            }
-
-            showPermissionSettingDialog(activity, allPermissions, deniedPermissions, callback);
-            return;
-        }
-
-        if (deniedPermissions.size() == 1) {
-
-            String deniedPermission = deniedPermissions.get(0);
-
-            String backgroundPermissionOptionLabel = getBackgroundPermissionOptionLabel(activity);
-
-            if (Permission.ACCESS_BACKGROUND_LOCATION.equals(deniedPermission)) {
-                ToastUtils.INSTANCE.showShort(activity.getString(R.string.common_permission_background_location_fail_hint, backgroundPermissionOptionLabel));
-                return;
-            }
-
-            if (Permission.BODY_SENSORS_BACKGROUND.equals(deniedPermission)) {
-                ToastUtils.INSTANCE.showShort(activity.getString(R.string.common_permission_background_sensors_fail_hint, backgroundPermissionOptionLabel));
-                return;
-            }
-        }
-
-        final String message;
-        List<String> permissionNames = PermissionNameConvert.permissionsToNames(activity, deniedPermissions);
-        if (!permissionNames.isEmpty()) {
-            message = activity.getString(R.string.common_permission_fail_assign_hint,
-                    PermissionNameConvert.listToString(activity, permissionNames));
-        } else {
-            message = activity.getString(R.string.common_permission_fail_hint);
-        }
-        ToastUtils.INSTANCE.showShort(message);
-    }
-
-    @Override
-    public void finishPermissionRequest(@NonNull Activity activity, @NonNull List<String> allPermissions,
-                                        boolean skipRequest, @Nullable OnPermissionCallback callback) {
-        mRequestFlag = false;
-        dismissPopupWindow();
-    }
-
-    private void showPopupWindow(Activity activity, ViewGroup decorView, String message) {
-        if (mPermissionPopup == null) {
-            View contentView = LayoutInflater.from(activity)
-                    .inflate(R.layout.permission_description_popup, decorView, false);
-            mPermissionPopup = new PopupWindow(activity);
-            mPermissionPopup.setContentView(contentView);
-            mPermissionPopup.setWidth(WindowManager.LayoutParams.MATCH_PARENT);
-            mPermissionPopup.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-            mPermissionPopup.setAnimationStyle(android.R.style.Animation_Dialog);
-            mPermissionPopup.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            mPermissionPopup.setTouchable(true);
-            mPermissionPopup.setOutsideTouchable(true);
-        }
-        TextView messageView = mPermissionPopup.getContentView().findViewById(R.id.tv_permission_description_message);
-        messageView.setText(message);
-        // 注意：这里的 PopupWindow 只是示例，没有监听 Activity onDestroy 来处理 PopupWindow 生命周期
-        mPermissionPopup.showAtLocation(decorView, Gravity.TOP, 0, 0);
-    }
-
-    private void dismissPopupWindow() {
-        if (mPermissionPopup == null) {
-            return;
-        }
-        if (!mPermissionPopup.isShowing()) {
-            return;
-        }
-        mPermissionPopup.dismiss();
-    }
-
-    private void showPermissionSettingDialog(Activity activity, List<String> allPermissions,
-                                             List<String> deniedPermissions, OnPermissionCallback callback) {
-        if (activity == null || activity.isFinishing() ||
-                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && activity.isDestroyed())) {
-            return;
-        }
-
-        String message = null;
-
-        List<String> permissionNames = PermissionNameConvert.permissionsToNames(activity, deniedPermissions);
-        if (!permissionNames.isEmpty()) {
-            if (deniedPermissions.size() == 1) {
-                String deniedPermission = deniedPermissions.get(0);
-
-                if (Permission.ACCESS_BACKGROUND_LOCATION.equals(deniedPermission)) {
-                    message = activity.getString(R.string.common_permission_manual_assign_fail_background_location_hint, getBackgroundPermissionOptionLabel(activity));
-                } else if (Permission.BODY_SENSORS_BACKGROUND.equals(deniedPermission)) {
-                    message = activity.getString(R.string.common_permission_manual_assign_fail_background_sensors_hint, getBackgroundPermissionOptionLabel(activity));
+            } else {
+                if (XXPermissions.containsPermission(deniedList, PermissionNames.ACCESS_BACKGROUND_LOCATION)) {
+                    if (VERSION.SDK_INT >= VERSION_CODES.S &&
+                            XXPermissions.containsPermission(deniedList, PermissionNames.ACCESS_FINE_LOCATION)) {
+                        return activity.getString(R.string.common_permission_fail_hint_2,
+                                activity.getString(R.string.common_permission_location),
+                                getBackgroundPermissionOptionLabel(activity),
+                                activity.getString(R.string.common_permission_location_fine_option));
+                    } else {
+                        return activity.getString(R.string.common_permission_fail_hint_1,
+                                activity.getString(R.string.common_permission_location),
+                                getBackgroundPermissionOptionLabel(activity));
+                    }
                 }
             }
-            if (TextUtils.isEmpty(message)) {
-                message = activity.getString(R.string.common_permission_manual_assign_fail_hint,
-                        PermissionNameConvert.listToString(activity, permissionNames));
+        } else if (deniedSensorsPermissionCount == deniedPermissionCount && VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+            if (deniedPermissionCount == 1) {
+                if (XXPermissions.equalsPermission(deniedList.get(0), PermissionNames.BODY_SENSORS_BACKGROUND)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                        return activity.getString(R.string.common_permission_fail_hint_1,
+                                activity.getString(R.string.common_permission_health_data_background),
+                                activity.getString(R.string.common_permission_health_data_background_option));
+                    } else {
+                        return activity.getString(R.string.common_permission_fail_hint_1,
+                                activity.getString(R.string.common_permission_body_sensors_background),
+                                getBackgroundPermissionOptionLabel(activity));
+                    }
+                }
+            } else {
+                if (doNotAskAgain) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                        return activity.getString(R.string.common_permission_fail_hint_1,
+                                activity.getString(R.string.common_permission_health_data),
+                                activity.getString(R.string.common_permission_allow_all_option));
+                    } else {
+                        return activity.getString(R.string.common_permission_fail_hint_1,
+                                activity.getString(R.string.common_permission_body_sensors),
+                                getBackgroundPermissionOptionLabel(activity));
+                    }
+                }
             }
-        } else {
-            message = activity.getString(R.string.common_permission_manual_fail_hint);
+        } else if (deniedHealthPermissionCount == deniedPermissionCount && VERSION.SDK_INT >= VERSION_CODES.BAKLAVA) {
+
+            switch (deniedPermissionCount) {
+                case 1:
+                    if (XXPermissions.equalsPermission(deniedList.get(0), PermissionNames.READ_HEALTH_DATA_IN_BACKGROUND)) {
+                        return activity.getString(R.string.common_permission_fail_hint_3,
+                                activity.getString(R.string.common_permission_health_data_background),
+                                activity.getString(R.string.common_permission_health_data_background_option));
+                    } else if (XXPermissions.equalsPermission(deniedList.get(0), PermissionNames.READ_HEALTH_DATA_HISTORY)) {
+                        return activity.getString(R.string.common_permission_fail_hint_3,
+                                activity.getString(R.string.common_permission_health_data_past),
+                                activity.getString(R.string.common_permission_health_data_past_option));
+                    }
+                    break;
+                case 2:
+                    if (XXPermissions.containsPermission(deniedList, PermissionNames.READ_HEALTH_DATA_HISTORY) &&
+                            XXPermissions.containsPermission(deniedList, PermissionNames.READ_HEALTH_DATA_IN_BACKGROUND)) {
+                        return activity.getString(R.string.common_permission_fail_hint_3,
+                                activity.getString(R.string.common_permission_health_data_past) + activity.getString(R.string.common_permission_and) + activity.getString(R.string.common_permission_health_data_background),
+                                activity.getString(R.string.common_permission_health_data_past_option) + activity.getString(R.string.common_permission_and) + activity.getString(R.string.common_permission_health_data_background_option));
+                    } else if (XXPermissions.containsPermission(deniedList, PermissionNames.READ_HEALTH_DATA_HISTORY)) {
+                        return activity.getString(R.string.common_permission_fail_hint_2,
+                                activity.getString(R.string.common_permission_health_data) + activity.getString(R.string.common_permission_and) + activity.getString(R.string.common_permission_health_data_past),
+                                activity.getString(R.string.common_permission_allow_all_option),
+                                activity.getString(R.string.common_permission_health_data_background_option));
+                    } else if (XXPermissions.containsPermission(deniedList, PermissionNames.READ_HEALTH_DATA_IN_BACKGROUND)) {
+                        return activity.getString(R.string.common_permission_fail_hint_2,
+                                activity.getString(R.string.common_permission_health_data) + activity.getString(R.string.common_permission_and) + activity.getString(R.string.common_permission_health_data_background),
+                                activity.getString(R.string.common_permission_allow_all_option),
+                                activity.getString(R.string.common_permission_health_data_background_option));
+                    }
+                    break;
+                default:
+                    if (XXPermissions.containsPermission(deniedList, PermissionNames.READ_HEALTH_DATA_HISTORY) &&
+                            XXPermissions.containsPermission(deniedList, PermissionNames.READ_HEALTH_DATA_IN_BACKGROUND)) {
+                        return activity.getString(R.string.common_permission_fail_hint_2,
+                                activity.getString(R.string.common_permission_health_data) + activity.getString(R.string.common_permission_and) + activity.getString(R.string.common_permission_health_data_past) + activity.getString(R.string.common_permission_and) + activity.getString(R.string.common_permission_health_data_background),
+                                activity.getString(R.string.common_permission_allow_all_option),
+                                activity.getString(R.string.common_permission_health_data_past_option) + activity.getString(R.string.common_permission_and) + activity.getString(R.string.common_permission_health_data_background_option));
+                    }
+                    break;
+            }
+            return activity.getString(R.string.common_permission_fail_hint_1,
+                    activity.getString(R.string.common_permission_health_data),
+                    activity.getString(R.string.common_permission_allow_all_option));
         }
 
-        // 这里的 Dialog 只是示例，没有用 DialogFragment 来处理 Dialog 生命周期
-        new AlertDialog.Builder(activity, R.style.AlertDialog)
-                .setTitle(R.string.common_permission_alert)
-                .setMessage(message)
-                .setPositiveButton(R.string.common_permission_goto_setting_page, (dialog, which) -> {
-                    dialog.dismiss();
-                    XXPermissions.startPermissionActivity(activity,
-                            deniedPermissions, new OnPermissionPageCallback() {
-
-                                @Override
-                                public void onGranted() {
-                                    if (callback == null) {
-                                        return;
-                                    }
-                                    callback.onGranted(allPermissions, true);
-                                }
-
-                                @Override
-                                public void onDenied() {
-                                    showPermissionSettingDialog(activity, allPermissions,
-                                            XXPermissions.getDenied(activity, allPermissions), callback);
-                                }
-                            });
-                })
-                .show();
+        return activity.getString(doNotAskAgain ? R.string.common_permission_fail_assign_hint_1 :
+                        R.string.common_permission_fail_assign_hint_2,
+                PermissionConverter.getNickNamesByPermissions(activity, deniedList));
     }
 
     /**
      * 获取后台权限的《始终允许》选项的文案
      */
     @NonNull
-    private String getBackgroundPermissionOptionLabel(Context context) {
-        String backgroundPermissionOptionLabel = "";
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            backgroundPermissionOptionLabel = String.valueOf(context.getPackageManager().getBackgroundPermissionOptionLabel());
+    private String getBackgroundPermissionOptionLabel(@NonNull Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        if (packageManager != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            CharSequence backgroundPermissionOptionLabel = packageManager.getBackgroundPermissionOptionLabel();
+            if (!TextUtils.isEmpty(backgroundPermissionOptionLabel)) {
+                return backgroundPermissionOptionLabel.toString();
+            }
         }
-        if (TextUtils.isEmpty(backgroundPermissionOptionLabel)) {
-            backgroundPermissionOptionLabel = context.getString(R.string.common_permission_background_default_option_label);
-        }
-        return backgroundPermissionOptionLabel;
+
+        return context.getString(R.string.common_permission_allow_all_the_time_option);
     }
 }

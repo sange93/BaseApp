@@ -2,18 +2,17 @@ import com.android.build.api.dsl.ApplicationExtension
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
 configure<ApplicationExtension> {
     namespace = "com.s.demo"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.sange.baseapp"
-        minSdk = 22
-        targetSdk = 36
+        minSdk = 23
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 

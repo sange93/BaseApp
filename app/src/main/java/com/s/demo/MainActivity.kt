@@ -53,7 +53,6 @@ class MainActivity : BaseCompActivity() {
      * 获取定位权限
      */
     private fun getLocationPremiss() {
-        IPermissionsUtils.mLocationUseDesc = "当您在我们的产品中使用天气功能时，需要获取您设备的定位权限，不授权不影响App其他功能使用。"
         mPermissionsUtils.requestLocation(this){
             LogUtils.i("getLocationPremiss", "获取定位权限 成功")
             ToastUtils.showShort("获取定位权限成功")

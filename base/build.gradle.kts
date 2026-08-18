@@ -2,20 +2,19 @@ import com.android.build.api.dsl.LibraryExtension
 
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     `maven-publish`
 }
 
 //group = "com.github.sange93"
-//version = "1.2.7"
+//version = "1.2.9"
 
 configure<LibraryExtension> {
     namespace = "com.sange.base"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // 开启矢量图
@@ -47,6 +46,11 @@ configure<LibraryExtension> {
     }
 }
 
+// Kotlin 编译配置
+kotlin {
+    jvmToolchain(21)
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -59,15 +63,15 @@ dependencies {
     api(libs.androidx.activity.compose)
     // compose最新Bom版本：https://developer.android.google.cn/jetpack/compose/bom?hl=en
     // Bom内Lib详细版本：https://developer.android.google.cn/jetpack/compose/bom/bom-mapping?hl=en
-    val composeBom = platform("androidx.compose:compose-bom:2025.05.00")
+    val composeBom = platform("androidx.compose:compose-bom:2026.08.00")
     api(composeBom)
     api(libs.androidx.ui)
     api(libs.androidx.ui.graphics)
     api(libs.androidx.ui.tooling.preview)
     api(libs.androidx.material3)
     api(libs.androidx.material)
-    androidTestApi(composeBom)
-    androidTestApi(libs.androidx.ui.test.junit4)
+    androidTestImplementation(composeBom)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
     debugApi(libs.androidx.ui.tooling)
     debugApi(libs.androidx.ui.test.manifest)
 
@@ -88,10 +92,7 @@ dependencies {
     // 动态权限申请
     api(libs.accompanist.permissions)
 //    // 权限请求框架 适配Android 14 https://github.com/getActivity/XXPermissions
-//    api 'com.github.getActivity:XXPermissions:18.5'
     api(libs.xxPermissions)
-    // PermissionX 权限请求库
-//    api("com.guolindev.permissionx:permissionx:1.7.1")
 
     // 启动画面
     api(libs.androidx.core.splashscreen)
@@ -109,6 +110,7 @@ dependencies {
     api(libs.androidx.viewpager2)
     // 强大而灵活的RecyclerView Adapter
     api(libs.baserecyclerviewadapterhelper)
+
     // Android 版本更新 https://github.com/AlexLiuSheng/CheckVersionLib
     // 原版已不再维护，未适配Android 12 会报java.lang.IllegalArgumentException错误
 //    api("com.github.AlexLiuSheng:CheckVersionLib:2.4.1_androidx")
@@ -116,14 +118,15 @@ dependencies {
     api(libs.checkversionlib)
 }
 
-afterEvaluate {
-    publishing {
-        publications {
+publishing {
+    publications {
+        // 等待Android插件应用完成后再创建发布任务
+        plugins.withId("com.sange.base") {
             // Creates a Maven publication called "release".
             create<MavenPublication>("release"){
                 groupId = "com.github.sange93"
                 artifactId = "BaseApp"
-                version = "1.2.8"
+                version = "1.2.9"
                 from(components["release"])
             }
         }
