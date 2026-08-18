@@ -44,6 +44,13 @@ configure<LibraryExtension> {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    // 主动指明需要发布的构建变体为release
+    publishing {
+        singleVariant("release") {
+            withSourcesJar() // 可选，自动生成源码jar包，发布后方便使用者查看源码
+            withJavadocJar() // 可选，生成javadoc注释包
+        }
+    }
 }
 
 // Kotlin 编译配置
@@ -120,13 +127,13 @@ dependencies {
 
 publishing {
     publications {
-        // 等待Android插件应用完成后再创建发布任务
-        plugins.withId("com.sange.base") {
-            // Creates a Maven publication called "release".
-            create<MavenPublication>("release"){
-                groupId = "com.github.sange93"
-                artifactId = "BaseApp"
-                version = "1.2.9"
+        // Creates a Maven publication called "release".
+        create<MavenPublication>("release"){
+            groupId = "com.github.sange93"
+            artifactId = "BaseApp"
+            version = "1.2.10"
+//                from(project.components["release"])
+            afterEvaluate {
                 from(components["release"])
             }
         }
