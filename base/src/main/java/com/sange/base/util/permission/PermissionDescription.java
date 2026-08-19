@@ -151,6 +151,9 @@ public final class PermissionDescription implements OnPermissionDescription {
                     // 对话框一定要设置成不可取消的
                     .setCancelable(false)
                     .setPositiveButton(confirmButtonText, confirmListener)
+                    // 更新版本：记得加取消按钮 ↓↓↓
+                    .setNegativeButton("取消", (dialogInterface, i) -> {})
+                    // 更新版本：记得加取消按钮 ↑↑↑
                     .create();
         } else {
             mPermissionDialog = new AlertDialog.Builder(activity)
@@ -159,6 +162,9 @@ public final class PermissionDescription implements OnPermissionDescription {
                     // 对话框一定要设置成不可取消的
                     .setCancelable(false)
                     .setPositiveButton(confirmButtonText, confirmListener)
+                    // 更新版本：记得加取消按钮 ↓↓↓
+                    .setNegativeButton("取消", (dialogInterface, i) -> {})
+                    // 更新版本：记得加取消按钮 ↑↑↑
                     .create();
         }
         mPermissionDialog.show();
