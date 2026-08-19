@@ -131,7 +131,7 @@ publishing {
         create<MavenPublication>("release"){
             groupId = "com.github.sange93"
             artifactId = "BaseApp"
-            version = "1.2.11"
+            version = "1.2.12"
 //                from(project.components["release"])
             afterEvaluate {
                 from(components["release"])
